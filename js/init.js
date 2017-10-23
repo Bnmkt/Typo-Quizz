@@ -1,16 +1,22 @@
 var Quizz = function(container) {
   var container = document.getElementById(container)
   var score;
+  var playing;
   var round;
   var currentFont;
   var previousFont;
   var element;
   var gametype;
+  var gameMix = 0;
+  var famillyBase = ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"]
+  var famillyBaseL = ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"]
+  var checkedFamilly = ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"]
+  var checkedFamillyL = ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"]
   this.init = function() {
     reset();
   }
   var reset = function() {
-    score = 0;
+    score = (localStorage.getItem("score")) ? parseInt(localStorage.getItem("score"))  : 0;;
     currentFont = null;
     previousFont = [];
     round = 0;
@@ -25,10 +31,12 @@ var Quizz = function(container) {
   var listTypo = function() {
     var localTypo = [];
     $.each(typos, function(key, val) {
-      $.each(val, function(key2, val2) {
-        val3 = [val2[0], val2[1], key]
-        localTypo.push(val3)
-      })
+      if(checkedFamilly.indexOf(key)+1 || checkedFamillyL.indexOf(key)+1){
+        $.each(val, function(key2, val2) {
+          val3 = [val2[0], val2[1], key]
+          localTypo.push(val3)
+        })
+      }
     })
     return localTypo;
   }
@@ -55,10 +63,10 @@ var Quizz = function(container) {
         }
         break;
       default:
-        var famille = ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE","LINEALE"]
+        var famille = ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE", "LINEALE"]
         resp = [alltypo[nb][2]]
-        if(resp[0].indexOf('LINEALE')+1){
-          famille = ["LINEALE DE TRANSITION","LINEALE GEOMETRIQUE","LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"]
+        if (resp[0].indexOf('LINEALE') + 1) {
+          famille = ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"]
         }
         while (resp.length < 4) {
           var nbChoix = Math.floor(Math.random() * famille.length);
@@ -93,15 +101,16 @@ var Quizz = function(container) {
         element.append("<p class=\"infor\">Le livre <a href=\"https://www.petitpoisson.be/projets/choixtypo\" target=\"_blank\">Choix typographique</a> est recommandé pour avoir une explication sur les différences entre les polices.</p>");
         element.append("<p class=\"infor\">Il contient également des informations sur l'histoire de celles-ci.</p>");
         element.append("<div class='buttons'>");
+        $("div.buttons").append('<div class="qQuizzMix"><a class="launch3" disable>Mixte</a></div>')
         $("div.buttons").append('<div class="qQuizz"><a class="launch2">Polices</a></div>')
         $("div.buttons").append('<div class="qQuizzFam"><a class="launch">Familles</a></div>')
         $("div.buttons").append('<div class="qScore"><a class="score">SCORE</a></div>')
         $("div.buttons").append('<div class="qList"><a class="list">LISTE</a></div>')
-        $("div.buttons").append('<div class="qSetting"><a class="setting" disable>OPTION</a></div>')
+        $("div.buttons").append('<div class="qSetting"><a class="setting">OPTION</a></div>')
         element.append("<p class=\"infor\">Cette app est conçue pour aider les étudiants du cours de typographie de M. Spirlet à l'Inpress (HEPL) à Seraing.</p>");
         element.append("<p class=\"infor\">Je précise également que cette application ne sert pas d'antisèche, c'est avant tous un support d'<b>étude&nbsp;!</b>.</p>");
-        element.append("<p class=\"infor\">Télécharger l'application sur <a href=\"https://play.google.com/store/apps/details?id=net.bnmkt.typoquizz&hl=fr\" target=\"_blank\"><img src=\"./img/google-play.svg\" width=\"48\" height=\"48\" alt=\"\" /></a></p>");
-        // element.append("<p class=\"infor\">Une alternative web existe pour les utilisateurs d'IOS sur <a href=\"Bnmkt\" target=\"_blank\">Bnmkt.net/typo</a>, n'hésitez pas à la leur conseiller&nbsp;!n</p>");
+        element.append("<p class=\"infor flaticon\"><a href=\"https://play.google.com/store/apps/details?id=net.bnmkt.typoquizz&hl=fr\" target=\"_blank\"><img src=\"./img/google-play.svg\" width=\"48\" height=\"48\" alt=\"\" /></a><a href=\"https://github.com/Bnmkt/Typo-Quizz\" target=\"_blank\"><img src=\"./img/github-logo.svg\" width=\"48\" height=\"48\" alt=\"\" /></a></p>");
+        // element.append("<p class=\"infor\">Une alternative web existe pour les utilisateurs d'IOS sur <a href=\"typo.bnmkt.net\" target=\"_blank\">typo.bnmkt.net</a>, n'hésitez pas à la leur conseiller&nbsp;!n</p>");
         $(".list").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow("list");
@@ -110,14 +119,23 @@ var Quizz = function(container) {
           //
         });
         $(".launch").click(function() {
+          gameMix = 0
           $("#game").fadeOut(250, function() {
             quizz.changeWindow("quizz");
             $("#game").fadeIn(150, function() {});
           });
         });
         $(".launch2").click(function() {
+          gameMix = 0
           $("#game").fadeOut(250, function() {
             quizz.changeWindow("quizzFam");
+            $("#game").fadeIn(150, function() {});
+          });
+        });
+        $(".launch3").click(function() {
+          gameMix = 1;
+          $("#game").fadeOut(250, function() {
+            quizz.changeWindow("quizzMix");
             $("#game").fadeIn(150, function() {});
           });
         });
@@ -137,7 +155,7 @@ var Quizz = function(container) {
       case 'list':
         var lastfamily = "";
         element.append("<h1>Liste des polices</h1>")
-        element.append("<p><i>L'application compte en tout <b>"+this.listTypo().length+"/86</b> polices</i></p>")
+        element.append("<p><i>L'application compte en tout <b>" + this.listTypo().length + "/86</b> polices</i></p>")
         element.append("<ul id='fontlist'>");
         $.each(this.listTypo(), function(key, val) {
           if (lastfamily != val[2]) {
@@ -149,17 +167,18 @@ var Quizz = function(container) {
         break;
       case 'quizzFam':
         gametype = 1;
+        playing = 1;
         element.append("<h1>Quelle famille ?</h1>")
         var ty = randomFont();
         var reponse = ty[2];
         element.append("<div id='fontlist'>")
         element.append("<div id='score'>")
-        score = Math.round(score*100)/100
+        score = Math.round(score * 100) / 100
         $("#score").text(score)
         var game = $("div#fontlist")
         game.addClass("gameQuizz")
         game.append("<img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" />")
-        if(reponse.indexOf("LINEALE")+1){
+        if (reponse.indexOf("LINEALE") + 1) {
           ty[3][1] = ty[3][1].split("LINEALE")[1];
           ty[3][2] = ty[3][2].split("LINEALE")[1];
           ty[3][3] = ty[3][3].split("LINEALE")[1];
@@ -173,19 +192,25 @@ var Quizz = function(container) {
         $("div.buttons").append('<div class="dchoix qBtnR4"><a class="choix">' + ty[3][0] + '</a></div>')
         $("a.choix").click(function(e) {
           var content = $(this).text();
-          if(reponse.indexOf("LINEALE")+1){
-            content = "LINEALE"+content;
+          if (reponse.indexOf("LINEALE") + 1) {
+            content = "LINEALE" + content;
           }
           previousFont = ty[2];
           round++;
           if (content == reponse) {
-            score+=1;
+            if (playing) {
+              score += 1;
+              playing = 0;
+            }
             $("#game").fadeOut(650, function() {
               quizz.changeWindow("victory");
               $("#game").fadeIn(150, function() {});
             });
           } else {
-            score -= .33;
+            if (playing) {
+              score -= .2;
+              playing = 0;
+            }
             $("#game").fadeOut(650, function() {
               quizz.changeWindow("defeat");
               $("#game").fadeIn(150, function() {});
@@ -199,7 +224,7 @@ var Quizz = function(container) {
         var ty = randomFont(2);
         element.append("<div id='fontlist'>")
         element.append("<div id='score'>")
-        score = Math.round(score*100)/100
+        score = Math.round(score * 100) / 100
         $("#score").text(score)
         var game = $("div#fontlist")
         game.addClass("gameQuizz")
@@ -215,13 +240,19 @@ var Quizz = function(container) {
           previousFont = ty[0];
           round++;
           if (content == reponse) {
-            score+=1;
+            if (playing) {
+              score += 1;
+              playing = 0;
+            }
             $("#game").fadeOut(450, function() {
               quizz.changeWindow("victory");
               $("#game").fadeIn(150, function() {});
             });
           } else {
-            score-=.33
+            if (playing) {
+              score -= .2;
+              playing = 0;
+            }
             $("#game").fadeOut(450, function() {
               quizz.changeWindow("defeat");
               $("#game").fadeIn(150, function() {});
@@ -229,13 +260,40 @@ var Quizz = function(container) {
           }
         })
         break;
+      case 'quizzMix':
+        var w = false;
+        do{
+          w=false;
+          if(gametype){
+            console.log("Oui");
+            switch (gametype) {
+              case 1:
+                quizz.changeWindow("quizzFam")
+                break;
+              case 2:
+                quizz.changeWindow("quizz")
+                break;
+            }
+          }else{
+            console.log("non");
+            gametype = Math.round(Math.random())+1;
+            w=true;
+          }
+        }while(w==true);
+        break;
       case "victory":
-        element.append('<div class="victory launch">VICTOIRE :)<br><br>Appuie ici pour continuer</div>')
-        if (gametype == 1) {
+        if (gametype == 2) {
           var t = "quizz";
-        } else {
+          var text = "Quizz Polices"
+        } else if(gametype == 1){
           var t = "quizzFam";
+          var text = "Quizz Familles"
         }
+        if(gameMix){
+          t = "quizzMix";
+          var text = "Quizz Mixte"
+        }
+        element.append('<div class="victory launch">VICTOIRE :)<br>La bonne réponse était : ' + previousFont + '<br><br>Appuie ici pour continuer ' + text + '</div>')
         $(".launch").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow(t);
@@ -244,12 +302,18 @@ var Quizz = function(container) {
         });
         break;
       case "defeat":
-        element.append('<div class="defeat launch">RATÉ :(<br>La bonne réponse était : ' + previousFont + '<br><br>Appuie ici pour continuer</div>')
-        if (gametype == 1) {
+        if (gametype == 2) {
           var t = "quizz";
-        } else {
+          var text = "Quizz Polices"
+        } else if(gametype == 1){
           var t = "quizzFam";
+          var text = "Quizz Familles"
         }
+        if(gameMix){
+          t = "quizzMix";
+          var text = "Quizz Mixte"
+        }
+        element.append('<div class="defeat launch">RATÉ :(<br>La bonne réponse était : ' + previousFont + '<br><br>Appuie ici pour continuer ' + text + '</div>')
         $(".launch").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow(t);
@@ -259,34 +323,63 @@ var Quizz = function(container) {
         break;
       case 'score':
         element.append("<h1>Panneau des score (WIP)</h1>")
-        element.append("<p>Vous avez un score de " + score + " sur " + round + " (+1 / -0.33)</p>")
-        scorer = Math.round((score/round)*20*100)/100
+        element.append("<p>Vous avez un score de " + score + " sur " + round + " (+1 / -0.2)</p>")
+        scorer = Math.round((score / round) * 20 * 100) / 100
         var text = "";
-        if(scorer < 0){
+        if (scorer < 0) {
           text = "";
-        }else if(scorer < 8 && scorer > 0){
+        } else if (scorer < 8 && scorer > 0) {
           text = "Il y a encore du travail... Courage!";
-        }else if(scorer < 12 && scorer > 7){
+        } else if (scorer < 12 && scorer > 7) {
           text = "Tu y es presque, tu vas réussir";
-        }else if(scorer < 15 && scorer > 11){
+        } else if (scorer < 15 && scorer > 11) {
           text = "Tu as l'air de bien connaitre les polices !";
-        }else if(scorer < 18 && scorer > 14){
+        } else if (scorer < 18 && scorer > 14) {
           text = "Beau travail !";
-        }else if(scorer > 17){
+        } else if (scorer > 17) {
           text = "Es-tu vraiment humain ?";
         }
-        if(isNaN(scorer)){scorer=0;}
-        element.append("<p>celà te fais "+scorer+"/20...<br>" + text + "</p>")
+        if (isNaN(scorer)) {
+          scorer = 0;
+        }
+        element.append("<p>celà te fais " + scorer + "/20...<br>" + text + "</p>")
         break;
       case 'setting':
-        element.append("<h1>Settings (WIP)</h1>")
-        element.append("<p>En cours de préparation, le menu des paramètres vous laissera choisir par exemple une ou plusieurs famille de polices pour vous entrainer.</p>")
-        element.append("<p>De plus, vous pourrez choisir les informations que vous envoyez.</p>")
-        element.append("<p>Pourquoi sortir une application alors que ce panneau n'est pas fini ?<br>Pour que vous puissiez vous entrainer.</p>")
-
+        element.append("<h1>Paramètres</h1>")
+        element.append("<div id=\"settingFam\"><p>Familles disponibles dans les quizz</p></div>")
+        var settingFam = $("div#settingFam")
+        $.each(typos, function(fam, arrFnt) {
+          if (checkedFamilly.indexOf(fam) + 1 || checkedFamillyL.indexOf(fam) + 1) {
+            checked = "checked=\"checked\"";
+          } else {
+            checked = "";
+          }
+          settingFam.append("<div><input type=\"checkbox\" " + checked + " value=\"" + fam + "\" id=\"inp" + fam + "\" /><label for=\"inp" + fam + "\">" + fam + "</label></div>")
+        })
+        $("input[type=checkbox]").change(function(handler) {
+          if ($(this).prop("checked")) {
+            if (!checkedFamilly.indexOf($(this).attr("value")) + 1 && famillyBase.indexOf($(this).attr("value")) + 1) {
+              checkedFamilly = checkedFamilly.concat([$(this).attr("value")]);
+            }
+            if (!checkedFamillyL.indexOf($(this).attr("value")) + 1 && famillyBaseL.indexOf($(this).attr("value")) + 1) {
+              checkedFamillyL = checkedFamillyL.concat([$(this).attr("value")]);
+            }
+          } else {
+            if (checkedFamilly.indexOf($(this).attr("value")) + 1) {
+              checkedFamilly.splice(checkedFamilly.indexOf($(this).attr("value")), 1);
+            }
+            if (checkedFamillyL.indexOf($(this).attr("value")) + 1) {
+              checkedFamillyL.splice(checkedFamillyL.indexOf($(this).attr("value")), 1);
+            }
+          }
+          console.log(checkedFamilly);
+          console.log(checkedFamillyL);
+          quizz.changeWindow("setting")
+        })
         break;
       default:
         $(element).append("<p>Salut, si tu vois ce message, retient bien ce que tu as fait et viens me le dire</p>")
     }
+    localStorage.setItem("score", score);
   }
 }

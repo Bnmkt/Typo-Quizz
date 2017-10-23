@@ -83,17 +83,23 @@ img.imgFontPres{
 .buttons{
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 .buttons div{
   display: flex;
-  margin: auto;
-  flex-grow: 0;
+  overflow: hidden;
+  /margin: auto;
+  flex-shrink: 1;
+  margin-bottom: 1em;
 }
-.buttons div:nth-child(1):not(.dchoix),.buttons div:nth-child(2):not(.dchoix){
+.buttons div:nth-child(1):not(.dchoix){
+  flex-basis: 100%;
+}
+.buttons div:nth-child(2):not(.dchoix),.buttons div:nth-child(3):not(.dchoix){
   flex-basis: 48%;
 }
-.buttons div:nth-child(3):not(.dchoix),.buttons div:nth-child(4):not(.dchoix),.buttons div:nth-child(5):not(.dchoix){
-  flex-basis: 30%;
+.buttons div:nth-child(4):not(.dchoix),.buttons div:nth-child(5):not(.dchoix),.buttons div:nth-child(6):not(.dchoix){
+  flex-basis: 31%;
 }
 .buttons div.dchoix{
   border-radius: 5%;
@@ -122,6 +128,10 @@ img.imgFontPres{
   transform: rotate3d(.5, .5, 1, 20deg);
   transform: scale(.95);
 }
+html body div.button div.qQuizz , html body div.button div.qQuizzFam{
+  flex-grow: 1;
+  flex-basis: 40%;
+}
 .qQuizz a{
   background-color: rgb(214, 39, 39);
   background-image: url("../img/quizzFam.svg");
@@ -131,6 +141,12 @@ img.imgFontPres{
 .qQuizzFam a{
   background-color: rgb(39, 151, 214);
   background-image: url("../img/quizzPol.svg");
+  background-size: 100% 100%;
+  color: rgba(0,0,0,0);
+}
+.qQuizzMix a{
+  background-color: rgb(42, 214, 39);
+  background-image: url("../img/quizzMix.svg");
   background-size: 100% 100%;
   color: rgba(0,0,0,0);
 }
@@ -151,6 +167,37 @@ img.imgFontPres{
   background-image: url("../img/leaderboard.svg");
   background-size: 100% 100%;
   color: rgba(0,0,0,0);
+}
+.flaticon{
+  display: flex;
+  justify-content: space-around;
+}
+input[type="checkbox"]{
+  vertical-align: middle;
+  visibility: hidden;
+}
+input[checked] + label:before{
+    display: inline-block;
+    content: "\000a0";
+    width: 1em;
+    height: 1em
+    border: 0;
+    padding: 0;
+    background-color: green;
+}
+input:not([checked]) + label:before{
+  display: inline-block;
+  content: "\000a0";
+  width: 1em;
+  height: 1em;
+  border: 0;
+  padding: 0;
+  background-color: red;
+}
+label{
+  display: inline-block;
+  line-height: 1.2em;
+  padding: .1em;
 }
 .button a[disable], .button a[disable]:hover{
   opacity: 0.1;
