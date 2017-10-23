@@ -10,16 +10,10 @@ var Quizz = function(container) {
   var gameMix = 0;
   var famillyBase = ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"]
   var famillyBaseL = ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"]
-  var checkedFamilly = ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"]
-  var checkedFamillyL = ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"]
+  var checkedFamilly;
+  var checkedFamillyL;
   this.init = function() {
     reset();
-  }
-  var reset = function() {
-    score = (localStorage.getItem("score")) ? parseInt(localStorage.getItem("score"))  : 0;;
-    currentFont = null;
-    previousFont = [];
-    round = 0;
     if (!container) {
       $("body").append("<div id='game'>")
       element = $("div#game")
@@ -27,6 +21,20 @@ var Quizz = function(container) {
       element = container;
     }
     $(element).addClass('game')
+  }
+  var reset = function(trueReset) {
+    if(trueReset){
+      localStorage.removeItem("score")
+      localStorage.removeItem("round")
+      localStorage.removeItem("cFam")
+      localStorage.removeItem("cFamL")
+    }
+    score = (localStorage.getItem("score")) ? parseInt(localStorage.getItem("score"))  : 0;
+    currentFont = null;
+    previousFont = [];
+    round = (localStorage.getItem("round")) ? parseInt(localStorage.getItem("round"))  : 0;
+    checkedFamilly  = (localStorage.getItem("cFam")) ? JSON.parse(localStorage.getItem("cFam")) : ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"];
+    checkedFamillyL = (localStorage.getItem("cFamL")) ? JSON.parse(localStorage.getItem("cFamL")) : ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"];
   }
   var listTypo = function() {
     var localTypo = [];
@@ -96,14 +104,22 @@ var Quizz = function(container) {
     });
     switch (windowName) {
       case 'index':
+        if(checkedFamilly.length + checkedFamillyL.length < 4){
+          disable = "disable"
+        }else{
+          disable = ""
+        }
         element.append("<h1 id=\"Titre\">Typo Quizz</h1>");
         $(".home").remove()
         element.append("<p class=\"infor\">Le livre <a href=\"https://www.petitpoisson.be/projets/choixtypo\" target=\"_blank\">Choix typographique</a> est recommandé pour avoir une explication sur les différences entre les polices.</p>");
         element.append("<p class=\"infor\">Il contient également des informations sur l'histoire de celles-ci.</p>");
+        if(disable == "disable"){
+          element.append("<p class=\"infor err\">Vous n'avez pas 4 familles de polices acceptées, vous nous pouvez donc pas réaliser les Quizz mixtes et les Quizz familles</p>");
+        }
         element.append("<div class='buttons'>");
-        $("div.buttons").append('<div class="qQuizzMix"><a class="launch3" disable>Mixte</a></div>')
-        $("div.buttons").append('<div class="qQuizz"><a class="launch2">Polices</a></div>')
-        $("div.buttons").append('<div class="qQuizzFam"><a class="launch">Familles</a></div>')
+        $("div.buttons").append('<div class="qQuizzMix"><a class="launch3" '+disable+'>Mixte</a></div>')
+        $("div.buttons").append('<div class="qQuizz"><a class="launch">Polices</a></div>')
+        $("div.buttons").append('<div class="qQuizzFam"><a class="launch2" '+disable+'>Familles</a></div>')
         $("div.buttons").append('<div class="qScore"><a class="score">SCORE</a></div>')
         $("div.buttons").append('<div class="qList"><a class="list">LISTE</a></div>')
         $("div.buttons").append('<div class="qSetting"><a class="setting">OPTION</a></div>')
@@ -111,6 +127,8 @@ var Quizz = function(container) {
         element.append("<p class=\"infor\">Je précise également que cette application ne sert pas d'antisèche, c'est avant tous un support d'<b>étude&nbsp;!</b>.</p>");
         element.append("<p class=\"infor flaticon\"><a href=\"https://play.google.com/store/apps/details?id=net.bnmkt.typoquizz&hl=fr\" target=\"_blank\"><img src=\"./img/google-play.svg\" width=\"48\" height=\"48\" alt=\"\" /></a><a href=\"https://github.com/Bnmkt/Typo-Quizz\" target=\"_blank\"><img src=\"./img/github-logo.svg\" width=\"48\" height=\"48\" alt=\"\" /></a></p>");
         // element.append("<p class=\"infor\">Une alternative web existe pour les utilisateurs d'IOS sur <a href=\"typo.bnmkt.net\" target=\"_blank\">typo.bnmkt.net</a>, n'hésitez pas à la leur conseiller&nbsp;!n</p>");
+        $("[disable]").removeClass("launch2")
+        $("[disable]").removeClass("launch3")
         $(".list").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow("list");
@@ -372,14 +390,29 @@ var Quizz = function(container) {
               checkedFamillyL.splice(checkedFamillyL.indexOf($(this).attr("value")), 1);
             }
           }
-          console.log(checkedFamilly);
-          console.log(checkedFamillyL);
           quizz.changeWindow("setting")
         })
+        element.append("<div class='infor err'>Attention, le bouton ci dessous va supprimer toutes les données sauvegardée (Score, Familles séléctionnée ci dessus) en cliquant dessus, vous perdrez toutes les données relatives à l'application</div>")
+        element.append("<div><button id='tReset'>true reset</button></div>")
+        $("#tReset").click(function(handler) {
+          if(confirm("Attention cette action va remettre à ZERO toutes vos stats, êtes vous sur de vouloir TOUS remettre à zero ?")){
+            if(confirm("On est jamais trop sûr... tu as bien cliqué sur \"Oui\" ?")){
+              alert("Que grand bien te fasse...")
+              reset(1);
+              quizz.changeWindow("index")
+            }else{
+              alert("Ouf... tes données sont sauvegardées");
+            }
+          }
+        });
         break;
       default:
         $(element).append("<p>Salut, si tu vois ce message, retient bien ce que tu as fait et viens me le dire</p>")
     }
     localStorage.setItem("score", score);
+    localStorage.setItem("round", round);
+    localStorage.setItem("cFam", JSON.stringify(checkedFamilly));
+    localStorage.setItem("cFamL", JSON.stringify(checkedFamillyL));
+    window.scrollTo(0, 0);
   }
 }

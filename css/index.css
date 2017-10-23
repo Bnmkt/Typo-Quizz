@@ -12,7 +12,6 @@ html body{
   overflow-x: hidden;
   color:white;
   font-family: "Helvetica neue", Arial, sans-serif;
-  padding-bottom: 2em;
 }
 .game{
   min-height: 100vh;
@@ -134,13 +133,13 @@ html body div.button div.qQuizz , html body div.button div.qQuizzFam{
 }
 .qQuizz a{
   background-color: rgb(214, 39, 39);
-  background-image: url("../img/quizzFam.svg");
+  background-image: url("../img/quizzPol.svg");
   background-size: 100% 100%;
   color: rgba(0,0,0,0);
 }
 .qQuizzFam a{
   background-color: rgb(39, 151, 214);
-  background-image: url("../img/quizzPol.svg");
+  background-image: url("../img/quizzFam.svg");
   background-size: 100% 100%;
   color: rgba(0,0,0,0);
 }
@@ -172,6 +171,11 @@ html body div.button div.qQuizz , html body div.button div.qQuizzFam{
   display: flex;
   justify-content: space-around;
 }
+.err{
+  color:rgb(218, 36, 36);
+  line-height: 2em;
+  font-weight: 500;
+}
 input[type="checkbox"]{
   vertical-align: middle;
   visibility: hidden;
@@ -182,7 +186,8 @@ input[checked] + label:before{
     width: 1em;
     height: 1em
     border: 0;
-    padding: 0;
+    padding: 0 1em 0 0;
+    margin-right: 1em;
     background-color: green;
 }
 input:not([checked]) + label:before{
@@ -191,16 +196,32 @@ input:not([checked]) + label:before{
   width: 1em;
   height: 1em;
   border: 0;
-  padding: 0;
+  padding: 0 1em 0 0;
+  margin-right: 1em;
   background-color: red;
 }
 label{
   display: inline-block;
   line-height: 1.2em;
+  font-size: 1.2em
   padding: .1em;
+  padding-left: 1em;
 }
-.button a[disable], .button a[disable]:hover{
-  opacity: 0.1;
+#settingFam{
+  margin-bottom: 2em;
+}
+#tReset{
+  transition: .2s ease;
+  border: 0;
+  padding: .5em;
+  background-color: rgb(208, 208, 208);
+  width: 100%;
+}
+#tReset:hover{
+  background-color: rgb(150, 150, 150);
+}
+.buttons a[disable], .button a[disable]:hover{
+  opacity: 0.1!important;
 }
 .victory, .defeat{
   font-size: 2em;
