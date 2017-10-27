@@ -27,7 +27,7 @@ var typos = {
     ["SCALA","p1o5l9i8c7e4s (5).png"]
   ],
   "INCISE": [
-    ["ALBERTUR","p1o5l9i8c7e4s (1).png"],
+    ["ALBERTUS","p1o5l9i8c7e4s (1).png"],
     ["BERLIN SANS","p1o5l9i8c7e4s (2).png"],
     ["COPPERPLATE GOTHIC","p1o5l9i8c7e4s (3).png"],
     ["LITHOS","p1o5l9i8c7e4s (4).png"],
@@ -39,7 +39,7 @@ var typos = {
     ["COMIC SANS","p1o5l9i8c7e4s (2).png"],
     ["DOLORES","p1o5l9i8c7e4s (3).png"],
     ["DOM CASUAL","p1o5l9i8c7e4s (4).png"],
-    ["MISTAL","p1o5l9i8c7e4s (5).png"]
+    ["MISTRAL","p1o5l9i8c7e4s (5).png"]
   ],
   "MECANE": [
     ["AMERICAN TYPEWRITER","p1o5l9i8c7e4s (1).png"],
@@ -49,7 +49,7 @@ var typos = {
     ["ROCKWELL","p1o5l9i8c7e4s (5).png"],
     ["ROSEWOOD","p1o5l9i8c7e4s (6).png"],
     ["OFFICINA SERIF","OFFICINA SERIF.png"],
-    ["THESIS THESERIF SERIF","THESIS THESERIF.png"]
+    ["THESIS THESERIF","THESIS THESERIF.png"]
   ],
   "REALE": [
     ["BASKERVILLE","p1o5l9i8c7e4s (1).png"],
@@ -104,6 +104,7 @@ var typos = {
     ["FRANKLIN GOTHIC","p1o5l9i8c7e4s (3).png"],
     ["GILL SANS","p1o5l9i8c7e4s (5).png"],
     ["JOHNSTON","p1o5l9i8c7e4s (6).png"],
-    ["TRADE GOTHIC","THESIS THESANS.png"]
+    ["THESIS THESANS","THESIS THESANS.png"],
+    ["TRADE GOTHIC","TRADE GOTHIC.png"]
   ]
 }

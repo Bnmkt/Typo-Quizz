@@ -5,6 +5,8 @@ var Quizz = function(container) {
   var round;
   var previousFont;
   var element;
+  var difficulty;
+  var lastDif;
   var gametype;
   var gameMix = 0;
   var famillyBase = ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"]
@@ -23,17 +25,19 @@ var Quizz = function(container) {
   }
   var reset = function(trueReset) {
     if (trueReset) {
+      localStorage.removeItem("difficulty")
       localStorage.removeItem("score")
       localStorage.removeItem("round")
       localStorage.removeItem("cFam")
       localStorage.removeItem("cFamL")
     }
-    score = (localStorage.getItem("score")) ? parseInt(localStorage.getItem("score")) : 0;
-    currentFont = null;
-    previousFont = [];
-    round = (localStorage.getItem("round")) ? parseInt(localStorage.getItem("round")) : 0;
-    checkedFamilly = (localStorage.getItem("cFam")) ? JSON.parse(localStorage.getItem("cFam")) : ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"];
-    checkedFamillyL = (localStorage.getItem("cFamL")) ? JSON.parse(localStorage.getItem("cFamL")) : ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"];
+    score = (localStorage.getItem("score")) ? parseInt(localStorage.getItem("score")) : 0
+    currentFont = null
+    previousFont = []
+    round = (localStorage.getItem("round")) ? parseInt(localStorage.getItem("round")) : 0
+    difficulty = (localStorage.getItem("difficulty")) ? parseInt(localStorage.getItem("difficulty")) : 4
+    checkedFamilly = (localStorage.getItem("cFam")) ? JSON.parse(localStorage.getItem("cFam")) : ["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"]
+    checkedFamillyL = (localStorage.getItem("cFamL")) ? JSON.parse(localStorage.getItem("cFamL")) : ["LINEALE DE TRANSITION", "LINEALE GEOMETRIQUE", "LINEALE HUMANISTIQUE", "LINEALE CONTEMPORAINE"]
   }
   var listTypo = function() {
     var localTypo = [];
@@ -60,7 +64,7 @@ var Quizz = function(container) {
     switch (t) {
       case 2:
         resp = [alltypo[nb][0]]
-        while (resp.length < 4) {
+        while (resp.length < difficulty) {
           var nbChoix = Math.floor(Math.random() * alltypo.length);
           var choix = alltypo[nbChoix][0];
           if (choix != resp[0] && choix) {
@@ -74,10 +78,15 @@ var Quizz = function(container) {
         resp = [alltypo[nb][2]]
         if (resp[0].indexOf('LINEALE') + 1) {
           famille = famillyBaseL
+          lastDif = difficulty;
+          if(difficulty>0){
+            difficulty = 4;
+            element.attr("difficulty", 4)
+          }
         }
-        while (resp.length < 4) {
+        while (resp.length < difficulty) {
           var nbChoix = Math.floor(Math.random() * famille.length);
-          var choix = famille[nbChoix];
+          var choix = famille[nbChoix-1];
           if (choix != resp[0] && choix) {
             resp.push(choix)
             famille[nbChoix] = undefined;
@@ -89,10 +98,14 @@ var Quizz = function(container) {
       return 0.5 - Math.random()
     });
     alltypo[nb][3] = resp
+    if(difficulty==0){
+      alltypo[nb].splice(3,1)
+    }
     return alltypo[nb];
   }
   this.changeWindow = function(windowName) {
     $(element).empty();
+    $(element).attr('difficulty', difficulty)
     windowName = (!windowName) ? "index" : windowName;
     element.append("<div class='home'><img src=\"./img/homeicon.svg\" with=\"50\" height=\"50\" alt=\"\" /></div>");
     $(".home").click(function() {
@@ -111,23 +124,21 @@ var Quizz = function(container) {
         element.append("<h1 id=\"Titre\">Typo Quizz</h1>");
         $(".home").remove()
         element.append("<p class=\"infor\">Le livre <a href=\"https://www.petitpoisson.be/projets/choixtypo\" target=\"_blank\">Choix typographique</a> est recommandé pour avoir une explication sur les différences entre les polices.</p>");
-        element.append("<p class=\"infor\">Il contient également des informations sur l'histoire de celles-ci.</p>");
+        // element.append("<p class=\"infor\">Il contient également des informations sur l'histoire de celles-ci.</p>");
         if (disable == "disable") {
           element.append("<p class=\"infor err\">Vous n'avez pas 4 familles de polices acceptées, vous nous pouvez donc pas réaliser les Quizz mixtes et les Quizz familles</p>");
         }
         element.append("<div class='buttons'>");
-        $("div.buttons").append('<div class="qQuizzMix"><a class="launch3" ' + disable + '>Mixte</a></div>')
-        $("div.buttons").append('<div class="qQuizz"><a class="launch">Polices</a></div>')
-        $("div.buttons").append('<div class="qQuizzFam"><a class="launch2" ' + disable + '>Familles</a></div>')
-        $("div.buttons").append('<div class="qScore"><a class="score">SCORE</a></div>')
-        $("div.buttons").append('<div class="qList"><a class="list">LISTE</a></div>')
-        $("div.buttons").append('<div class="qSetting"><a class="setting">OPTION</a></div>')
+        $("div.buttons").append('<div class="qQlist" order="0"><a class="qqlist">JOUER</a></div>')
+        $("div.buttons").append('<div class="qScore" order="2"><a class="score">SCORE</a></div>')
+        $("div.buttons").append('<div class="qList" order="2"><a class="list">LISTE</a></div>')
+        $("div.buttons").append('<div class="qSetting" order="2"><a class="setting">OPTION</a></div>')
         element.append("<p class=\"infor\">Cette app est conçue pour aider les étudiants du cours de typographie de M. Spirlet à l'Inpress (HEPL) à Seraing.</p>");
-        element.append("<p class=\"infor\">Je précise également que cette application ne sert pas d'antisèche, c'est avant tous un support d'<b>étude&nbsp;!</b>.</p>");
+        // element.append("<p class=\"infor\">Je précise également que cette application ne sert pas d'antisèche, c'est avant tous un support d'<b>étude&nbsp;!</b>.</p>");
         element.append("<p class=\"infor flaticon\"><a href=\"https://play.google.com/store/apps/details?id=net.bnmkt.typoquizz&hl=fr\" target=\"_blank\"><img src=\"./img/google-play.svg\" width=\"48\" height=\"48\" alt=\"\" /></a><a href=\"https://github.com/Bnmkt/Typo-Quizz\" target=\"_blank\"><img src=\"./img/github-logo.svg\" width=\"48\" height=\"48\" alt=\"\" /></a></p>");
         // element.append("<p class=\"infor\">Une alternative web existe pour les utilisateurs d'IOS sur <a href=\"typo.bnmkt.net\" target=\"_blank\">typo.bnmkt.net</a>, n'hésitez pas à la leur conseiller&nbsp;!n</p>");
-        $("[disable]").removeClass("launch2")
-        $("[disable]").removeClass("launch3")
+        // $("[disable]").removeClass("launch2")
+        // $("[disable]").removeClass("launch3")
         $(".list").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow("list");
@@ -135,26 +146,12 @@ var Quizz = function(container) {
           });
           //
         });
-        $(".launch").click(function() {
-          gameMix = 0
+        $(".qqlist").click(function() {
           $("#game").fadeOut(250, function() {
-            quizz.changeWindow("quizz");
+            quizz.changeWindow("quizzList");
             $("#game").fadeIn(150, function() {});
           });
-        });
-        $(".launch2").click(function() {
-          gameMix = 0
-          $("#game").fadeOut(250, function() {
-            quizz.changeWindow("quizzFam");
-            $("#game").fadeIn(150, function() {});
-          });
-        });
-        $(".launch3").click(function() {
-          gameMix = 1;
-          $("#game").fadeOut(250, function() {
-            quizz.changeWindow("quizzMix");
-            $("#game").fadeIn(150, function() {});
-          });
+          //
         });
         $(".setting").click(function() {
           $("#game").fadeOut(250, function() {
@@ -182,6 +179,34 @@ var Quizz = function(container) {
           $("#fontlist").append("<ol>" + val[0] + " <img src='./img/font/" + val[2] + "/" + val[1] + "'></ol>");
         })
         break;
+      case 'quizzList':
+        element.append("<h1>Mode de jeu</h1>")
+        element.append("<div class='buttons'>");
+        $("div.buttons").append('<div class="qQuizzMix" order="0"><a class="launch3" ' + disable + '>Mixte</a></div>')
+        $("div.buttons").append('<div class="qQuizz" order="1"><a class="launch">Polices</a></div>')
+        $("div.buttons").append('<div class="qQuizzFam" order="1"><a class="launch2" ' + disable + '>Familles</a></div>')
+        $(".launch").click(function() {
+          gameMix = 0
+          $("#game").fadeOut(250, function() {
+            quizz.changeWindow("quizz");
+            $("#game").fadeIn(150, function() {});
+          });
+        });
+        $(".launch2").click(function() {
+          gameMix = 0
+          $("#game").fadeOut(250, function() {
+            quizz.changeWindow("quizzFam");
+            $("#game").fadeIn(150, function() {});
+          });
+        });
+        $(".launch3").click(function() {
+          gameMix = 1;
+          $("#game").fadeOut(250, function() {
+            quizz.changeWindow("quizzMix");
+            $("#game").fadeIn(150, function() {});
+          });
+        });
+        break;
       case 'quizzFam':
         gametype = 1;
         playing = 1;
@@ -195,48 +220,82 @@ var Quizz = function(container) {
         var game = $("div#fontlist")
         game.addClass("gameQuizz")
         game.append("<img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" />")
-        if (reponse.indexOf("LINEALE") + 1) {
-          ty[3][1] = ty[3][1].split("LINEALE")[1];
-          ty[3][2] = ty[3][2].split("LINEALE")[1];
-          ty[3][3] = ty[3][3].split("LINEALE")[1];
-          ty[3][0] = ty[3][0].split("LINEALE")[1];
-          game.append("<p>Linéale...</p>")
-        }
         game.append("<div class='buttons'>");
-        $("div.buttons").append('<div class="dchoix qBtnR1"><a class="choix">' + ty[3][1] + '</a></div>')
-        $("div.buttons").append('<div class="dchoix qBtnR2"><a class="choix">' + ty[3][2] + '</a></div>')
-        $("div.buttons").append('<div class="dchoix qBtnR3"><a class="choix">' + ty[3][3] + '</a></div>')
-        $("div.buttons").append('<div class="dchoix qBtnR4"><a class="choix">' + ty[3][0] + '</a></div>')
-        $("a.choix").click(function(e) {
-          var content = $(this).text();
+        if(ty[3]){
           if (reponse.indexOf("LINEALE") + 1) {
-            content = "LINEALE" + content;
-          }
-          previousFont = ty;
-          round++;
-          if (content == reponse) {
-            if (playing) {
-              score += 1;
-              playing = 0;
+            for (var i = 0; i < ty[3].length; i++) {
+              ty[3][i] = ty[3][i].split("LINEALE")[1];
             }
-            $("#game").fadeOut(650, function() {
-              quizz.changeWindow("victory");
-              $("#game").fadeIn(150, function() {});
-            });
-          } else {
-            if (playing) {
-              score -= .2;
-              playing = 0;
-            }
-            $("#game").fadeOut(650, function() {
-              quizz.changeWindow("defeat");
-              $("#game").fadeIn(150, function() {});
-            });
+            game.append("<p>Linéale...</p>")
           }
-        })
+          for (var i = 0; i < ty[3].length; i++) {
+            $("div.buttons").append('<div class="dchoix qBtnR'+ i +'"><a class="choix">' + ty[3][i] + '</a></div>')
+          }
+          $("a.choix").click(function(e) {
+            var content = $(this).text();
+            if (reponse.indexOf("LINEALE") + 1) {
+              content = "LINEALE" + content;
+            }
+            console.log(ty);
+            previousFont = ty;
+            if (content == reponse) {
+              if (playing) {
+                score += 1;
+                round++;
+                playing = 0;
+              }
+              $("#game").fadeOut(650, function() {
+                quizz.changeWindow("victory");
+                $("#game").fadeIn(150, function() {});
+              });
+            } else {
+              if (playing) {
+                score -= .2;
+                round++;
+                playing = 0;
+              }
+              $("#game").fadeOut(650, function() {
+                quizz.changeWindow("defeat");
+                $("#game").fadeIn(150, function() {});
+              });
+            }
+          })
+        }else{
+          $("div.buttons").append("<input type=\"text\" id=\"inputResp\" placeholder=\"Réponse\"/>")
+          $("div.buttons").append("<input type=\"submit\" value=\"Valider\" id=\"inputSubmit\" />")
+          $("#inputSubmit").click(function(){
+            var inputVal = $("#inputResp").val();
+            if(inputVal != "" && inputVal.length>=3){
+              content = inputVal.toUpperCase();
+              previousFont = ty
+              if (content == reponse) {
+                if (playing) {
+                  score += 1;
+                  round++;
+                  playing = 0;
+                }
+                $("#game").fadeOut(650, function() {
+                  quizz.changeWindow("victory");
+                  $("#game").fadeIn(150, function() {});
+                });
+              } else {
+                if (playing) {
+                  score -= .2;
+                  round++;
+                  playing = 0;
+                }
+                $("#game").fadeOut(650, function() {
+                  quizz.changeWindow("defeat");
+                  $("#game").fadeIn(150, function() {});
+                });
+              }
+            }
+          })
+        }
         break;
       case 'quizz':
         gametype = 2
+        playing = 1
         element.append("<h1>Quelle police ?</h1>")
         var ty = randomFont(2);
         element.append("<div id='fontlist'>")
@@ -248,41 +307,73 @@ var Quizz = function(container) {
         game.append("<img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" />")
         game.append("<div class='buttons'>");
         var reponse = ty[0];
-        $("div.buttons").append('<div class="dchoix qBtnR1"><a class="choix">' + ty[3][1] + '</a></div>')
-        $("div.buttons").append('<div class="dchoix qBtnR2"><a class="choix">' + ty[3][2] + '</a></div>')
-        $("div.buttons").append('<div class="dchoix qBtnR3"><a class="choix">' + ty[3][3] + '</a></div>')
-        $("div.buttons").append('<div class="dchoix qBtnR4"><a class="choix">' + ty[3][0] + '</a></div>')
-        $("a.choix").click(function(e) {
-          var content = $(this).text();
-          previousFont = ty;
-          round++;
-          if (content == reponse) {
-            if (playing) {
-              score += 1;
-              playing = 0;
-            }
-            $("#game").fadeOut(450, function() {
-              quizz.changeWindow("victory");
-              $("#game").fadeIn(150, function() {});
-            });
-          } else {
-            if (playing) {
-              score -= .2;
-              playing = 0;
-            }
-            $("#game").fadeOut(450, function() {
-              quizz.changeWindow("defeat");
-              $("#game").fadeIn(150, function() {});
-            });
+        if(ty[3]){
+          for (var i = 0; i < ty[3].length; i++) {
+            $("div.buttons").append('<div class="dchoix qBtnR'+ i +'"><a class="choix">' + ty[3][i] + '</a></div>')
           }
-        })
+          $("a.choix").click(function(e) {
+            var content = $(this).text();
+            previousFont = ty;
+            if (content == reponse) {
+              if (playing) {
+                score += 1;
+                round++;
+                playing = 0;
+              }
+              $("#game").fadeOut(450, function() {
+                quizz.changeWindow("victory");
+                $("#game").fadeIn(150, function() {});
+              });
+            } else {
+              if (playing) {
+                round++;
+                score -= .2;
+                playing = 0;
+              }
+              $("#game").fadeOut(450, function() {
+                quizz.changeWindow("defeat");
+                $("#game").fadeIn(150, function() {});
+              });
+            }
+          })
+        }else{
+          $("div.buttons").append("<input type=\"text\" id=\"inputResp\" placeholder=\"Réponse\"/>")
+          $("div.buttons").append("<input type=\"submit\" value=\"Valider\" id=\"inputSubmit\" />")
+          $("#inputSubmit").click(function(){
+            var inputVal = $("#inputResp").val();
+            if(inputVal != "" && inputVal.length>=3){
+              content = inputVal.toUpperCase();
+              previousFont = ty
+              if (content == reponse) {
+                if (playing) {
+                  score += 1;
+                  round++;
+                  playing = 0;
+                }
+                $("#game").fadeOut(650, function() {
+                  quizz.changeWindow("victory");
+                  $("#game").fadeIn(150, function() {});
+                });
+              } else {
+                if (playing) {
+                  score -= .2;
+                  round++;
+                  playing = 0;
+                }
+                $("#game").fadeOut(650, function() {
+                  quizz.changeWindow("defeat");
+                  $("#game").fadeIn(150, function() {});
+                });
+              }
+            }
+          })
+        }
         break;
       case 'quizzMix':
         var w = false;
         do {
           w = false;
           if (gametype) {
-            console.log("Oui");
             switch (gametype) {
               case 2:
                 quizz.changeWindow("quizzFam")
@@ -292,7 +383,6 @@ var Quizz = function(container) {
                 break;
             }
           } else {
-            console.log("non");
             gametype = Math.round(Math.random()) + 1;
             w = true;
           }
@@ -367,7 +457,8 @@ var Quizz = function(container) {
         break;
       case 'setting':
         element.append("<h1>Paramètres</h1>")
-        element.append("<div id=\"settingFam\"><p>Familles disponibles dans les quizz</p></div>")
+        element.append("<h2 id=\"setFamTitle\" class=\"titleSetting\"> > (Dé)sélectionner</h2>")
+        element.append("<div id=\"settingFam\" class=\"settingElement\"><p>Familles disponibles dans les quizz</p></div>")
         var settingFam = $("div#settingFam")
         $.each(typos, function(fam, arrFnt) {
           if (checkedFamilly.indexOf(fam) + 1 || checkedFamillyL.indexOf(fam) + 1) {
@@ -375,7 +466,20 @@ var Quizz = function(container) {
           } else {
             checked = "";
           }
-          settingFam.append("<div><input type=\"checkbox\" " + checked + " value=\"" + fam + "\" id=\"inp" + fam + "\" /><label for=\"inp" + fam + "\">" + fam + "</label></div>")
+          settingFam.append("<div class=\"famElement\"><input type=\"checkbox\" " + checked + " value=\"" + fam + "\" id=\"inp" + fam + "\" /><label for=\"inp" + fam + "\">" + fam + "</label></div>")
+        })
+        element.append("<h2 id=\"setDifficulty\" class=\"titleSetting\"> > Changer la difficulté</h2>")
+        element.append("<div id=\"settingDifficulty\" class=\"settingElement\"></div>")
+        $("#settingDifficulty").append("<select id=\"selectDif\"></select>")
+        $("#settingDifficulty").append("<p>Difficulté actuelle : "+difficulty+"Choix</p>")
+        $("#selectDif").append("<option value=\"2\" class=\"dif2\">Facile (2 choix)</option>")
+        $("#selectDif").append("<option value=\"4\" class=\"dif4\">Moyen (4 choix)</option>")
+        $("#selectDif").append("<option value=\"6\" class=\"dif6\">Difficile (6 choix)</option>")
+        $("#selectDif").append("<option value=\"0\" class=\"dif0\">Impossible (Donner la réponse)</option>")
+        $(".dif"+difficulty).attr("selected", "selected")
+        $("#selectDif").change(function(handler) {
+          difficulty = $(this).val();
+          quizz.changeWindow("setting")
         })
         $("input[type=checkbox]").change(function(handler) {
           if ($(this).prop("checked")) {
@@ -395,8 +499,9 @@ var Quizz = function(container) {
           }
           quizz.changeWindow("setting")
         })
-        element.append("<div class='infor err'>Attention, le bouton ci dessous va supprimer toutes les données sauvegardée (Score, Familles séléctionnée ci dessus) en cliquant dessus, vous perdrez toutes les données relatives à l'application</div>")
-        element.append("<div><button id='tReset'>true reset</button></div>")
+        element.append("<h2 id=\"setReset\" class=\"titleSetting\"> > Réinitialisation</h2>")
+        element.append("<div id=\"settingReset\" class=\"settingElement\"><button id='tReset'>true reset</button></div>")
+        $("settingReset").prepend("<div class='infor err'>Attention, le bouton ci dessous va supprimer toutes les données sauvegardée (Score, Familles séléctionnée ci dessus) en cliquant dessus, vous perdrez toutes les données relatives à l'application</div>")
         $("#tReset").click(function(handler) {
           if (confirm("Attention cette action va remettre à ZERO toutes vos stats, êtes vous sur de vouloir TOUS remettre à zero ?")) {
             if (confirm("On est jamais trop sûr... tu as bien cliqué sur \"Oui\" ?")) {
@@ -408,14 +513,20 @@ var Quizz = function(container) {
             }
           }
         });
+        $("#setFamTitle").click(function(){ $('.settingElement').slideUp(); if(!$('div#settingFam').is(":visible")){ $('div#settingFam').slideToggle() } })
+        $("#setDifficulty").click(function(){ $('.settingElement').slideUp(); if(!$('div#settingDifficulty').is(":visible")){ $('div#settingDifficulty').slideToggle() } })
+        $("#setReset").click(function(){ $('.settingElement').slideUp(); if(!$('div#settingReset').is(":visible")){ $('div#settingReset').slideToggle() } })
+        $('.settingElement').slideUp();
         break;
       default:
         $(element).append("<p>Salut, si tu vois ce message, retient bien ce que tu as fait et viens me le dire</p>")
     }
+    localStorage.setItem("difficulty", difficulty);
     localStorage.setItem("score", score);
     localStorage.setItem("round", round);
     localStorage.setItem("cFam", JSON.stringify(checkedFamilly));
     localStorage.setItem("cFamL", JSON.stringify(checkedFamillyL));
     window.scrollTo(0, 0);
+    // element.append("<p class=\"infor copyleft\">App codée par Sean Ferrara (2285)</p>")
   }
 }

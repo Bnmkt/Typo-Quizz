@@ -14,9 +14,17 @@ html body{
   font-family: "Helvetica neue", Arial, sans-serif;
 }
 .game{
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   padding: 1em;
   background-color: rgba(0,0,0,0.1);
+}
+.game>h1{
+  margin-bottom: auto;
+}
+.flaticon{
+  margin-top: auto;
 }
 .home{
   position: absolute;
@@ -74,7 +82,9 @@ h1{
   width: 100%;
 }
 .infor{
+  padding: .2em 0;
   text-align: justify;
+  text-align-last: center;
 }
 h1{
   text-align: center;
@@ -95,18 +105,49 @@ img.imgFontPres{
   flex-shrink: 1;
   margin-bottom: 1em;
 }
-.buttons div:nth-child(1):not(.dchoix){
+.buttons div[order="0"]{
   flex-basis: 100%;
 }
-.buttons div:nth-child(2):not(.dchoix),.buttons div:nth-child(3):not(.dchoix){
+.buttons div[order="1"]{
   flex-basis: 48%;
 }
-.buttons div:nth-child(4):not(.dchoix),.buttons div:nth-child(5):not(.dchoix),.buttons div:nth-child(6):not(.dchoix){
+.buttons div[order="2"]{
   flex-basis: 31%;
 }
 .buttons div.dchoix{
   border-radius: 5%;
+  flex-basis: 30%;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  padding: .2em;
+}
+.buttons input{
+  width: 100%;
+  padding:.5em;
+  font-size: 1.5em;
+  text-transform: uppercase;
+}
+.buttons input[type="text"]{
+  border:0;
+  text-align: center;
+  border-radius: 5px 5px 0px 0px;
+}
+.buttons input[type="submit"]{
+  border:0;
+  text-align: center;
+  border-radius: 0px 0px 15px 15px;
+  background-color: green;
+  color: white;
+  font-weight: 600;
+}
+html body #game[difficulty="2"] .buttons div.dchoix{
   flex-basis: 48%;
+}
+html body #game[difficulty="4"] .buttons div.dchoix{
+  flex-basis: 22%;
+}
+html body #game[difficulty="6"] .buttons div.dchoix{
+  flex-basis: 30%;
 }
 .buttons a{
   flex: 1;
@@ -127,13 +168,15 @@ img.imgFontPres{
   flex: 1;
 }
 .buttons:hover a:not(:hover){
-  opacity: .2;
+  opacity: .7;
   transform: rotate3d(.5, .5, 1, 20deg);
   transform: scale(.95);
 }
-html body div.button div.qQuizz , html body div.button div.qQuizzFam{
-  flex-grow: 1;
-  flex-basis: 40%;
+.qQlist a{
+  background-color: rgb(214, 39, 39);
+  background-image: url("../img/quizzMode.svg");
+  background-size: 100% 100%;
+  color: rgba(0,0,0,0);
 }
 .qQuizz a{
   background-color: rgb(214, 39, 39);
@@ -180,6 +223,9 @@ html body div.button div.qQuizz , html body div.button div.qQuizzFam{
   line-height: 2em;
   font-weight: 500;
 }
+.titleSetting{
+  color: orange;
+}
 input[type="checkbox"]{
   vertical-align: middle;
   visibility: hidden;
@@ -188,9 +234,8 @@ input[checked] + label:before{
     display: inline-block;
     content: "\000a0";
     width: 1em;
-    height: 1em
+    height: 1em;
     border: 0;
-    padding: 0 1em 0 0;
     margin-right: 1em;
     background-color: green;
 }
@@ -204,19 +249,38 @@ input:not([checked]) + label:before{
   margin-right: 1em;
   background-color: red;
 }
+.settingElement{
+  display: flex;
+  flex-direction: column;
+}
+.settingElement select{
+  font-size: 1.2em;
+  padding: .5em 0;
+}
+.famElement>input + label:hover:before{
+  background-color: orange;
+}
 label{
+  background-color: rgba(0,0,0,.2);
+  flex: 1 0 auto;
   display: inline-block;
   line-height: 1.2em;
-  font-size: 1.2em
-  padding: .1em;
+  font-size: 1.1em;
+  padding: 1em 0;
   padding-left: 1em;
+  margin: 0;
+  margin-bottom: .1em;
 }
 #settingFam{
   margin-bottom: 2em;
 }
+.famElement{
+  display: flex;
+}
 #tReset{
   transition: .2s ease;
   border: 0;
+  font-size: 2.5em;
   padding: .5em;
   background-color: rgb(208, 208, 208);
   width: 100%;
@@ -246,11 +310,14 @@ label{
 .defeat img{
   min-width: 100%;
 }
+.qBtnR0 a{
+  background-color: rgb(70, 7, 185);
+}
 .qBtnR1 a{
   background-color: rgb(185, 130, 7);
 }
 .qBtnR2 a{
-  background-color: rgb(7, 126, 185);
+  background-color: rgb(7, 36, 185);
 }
 .qBtnR3 a{
   background-color: rgb(11, 185, 7);
@@ -258,13 +325,16 @@ label{
 .qBtnR4 a{
   background-color: rgb(185, 7, 7);
 }
+.qBtnR5 a{
+  background-color: rgb(7, 185, 158);
+}
 html body div a[target="_blank"]{
   color: orange;
   font-weight: 600;
 }
-@media screen and (max-width: 600px) {
-  .buttons a{
-    min-height: 40vw !important;
-    max-height: 50vw !important;
+@media screen and (orientation:landscape) {
+  .buttons .dchoix>a{
+    min-height: 4em !important;
+    max-height: 4.5em !important;
   }
 }
