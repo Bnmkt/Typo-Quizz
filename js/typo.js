@@ -1,30 +1,30 @@
 var typos = {
   "DIDONE": [
-    ["BODONI","p1o5l9i8c7e4s (1).png"],
-    ["DIDOT","p1o5l9i8c7e4s (2).png"],
-    ["WALBAUM","p1o5l9i8c7e4s (3).png"]
+    ["BODONI","p1o5l9i8c7e4s (1).png","Giambattista bodoni"],
+    ["DIDOT","p1o5l9i8c7e4s (2).png",["adrian FRUTIGER","pierre didot"]],
+    ["WALBAUM","p1o5l9i8c7e4s (3).png","justus erich walbaum"]
   ],
   "FRACTURE": [
     ["FETTE FRAKTUR","p1o5l9i8c7e4s (1).png"],
     ["GOUDY TEXT","p1o5l9i8c7e4s (2).png"]
   ],
   "GARALDE": [
-    ["ALDUS","p1o5l9i8c7e4s (1).png"],
-    ["BEMBO","p1o5l9i8c7e4s (2).png"],
-    ["GALLIARD","p1o5l9i8c7e4s (3).png"],
-    ["GARAMOND","p1o5l9i8c7e4s (4).png"],
-    ["GRANJON","p1o5l9i8c7e4s (5).png"],
-    ["MINION","p1o5l9i8c7e4s (6).png"],
-    ["PALATINO","p1o5l9i8c7e4s (7).png"],
-    ["SABON","p1o5l9i8c7e4s (8).png"],
-    ["PLANTIN","p1o5l9i8c7e4s (10).png"]
+    ["ALDUS","p1o5l9i8c7e4s (1).png","hermann zapf"],
+    ["BEMBO","p1o5l9i8c7e4s (2).png","alde manuce et francesco"],
+    ["GALLIARD","p1o5l9i8c7e4s (3).png","robert granjon"],
+    ["GARAMOND","p1o5l9i8c7e4s (4).png","claude garamond"],
+    ["GRANJON","p1o5l9i8c7e4s (5).png","george w. jones"],
+    ["MINION","p1o5l9i8c7e4s (6).png","robert slimbach"],
+    ["PALATINO","p1o5l9i8c7e4s (7).png","hermann zapf"],
+    ["SABON","p1o5l9i8c7e4s (8).png",["claude garamond","robert granjon","robert slimbach"]],
+    ["PLANTIN","p1o5l9i8c7e4s (10).png",["robert granjon","frank hinman pierpont"]]
   ],
   "HUMANE": [
-    ["ADOBE JENSON","p1o5l9i8c7e4s (1).png"],
-    ["CENTAUR","p1o5l9i8c7e4s (2).png"],
-    ["HOEFLER TEXT","p1o5l9i8c7e4s (3).png"],
-    ["QUADRAAT","p1o5l9i8c7e4s (4).png"],
-    ["SCALA","p1o5l9i8c7e4s (5).png"]
+    ["ADOBE JENSON","p1o5l9i8c7e4s (1).png","NICOLAS JENSON"],
+    ["CENTAUR","p1o5l9i8c7e4s (2).png","Bruce Rogers"],
+    ["HOEFLER TEXT","p1o5l9i8c7e4s (3).png","Jonathan Hoefler"],
+    ["QUADRAAT","p1o5l9i8c7e4s (4).png","Fred smeijers"],
+    ["SCALA","p1o5l9i8c7e4s (5).png","martin major"]
   ],
   "INCISE": [
     ["ALBERTUS","p1o5l9i8c7e4s (1).png"],
@@ -42,22 +42,22 @@ var typos = {
     ["MISTRAL","p1o5l9i8c7e4s (5).png"]
   ],
   "MECANE": [
-    ["AMERICAN TYPEWRITER","p1o5l9i8c7e4s (1).png"],
-    ["CLARENDON","p1o5l9i8c7e4s (2).png"],
-    ["COOPER BLACK","p1o5l9i8c7e4s (3).png"],
-    ["COURIER","p1o5l9i8c7e4s (4).png"],
-    ["ROCKWELL","p1o5l9i8c7e4s (5).png"],
-    ["ROSEWOOD","p1o5l9i8c7e4s (6).png"],
+    ["AMERICAN TYPEWRITER","p1o5l9i8c7e4s (1).png","Joel kaden & tony stan"],
+    ["CLARENDON","p1o5l9i8c7e4s (2).png","robert besley"],
+    ["COOPER BLACK","p1o5l9i8c7e4s (3).png","oswald cooper"],
+    ["COURIER","p1o5l9i8c7e4s (4).png","howard kettler & adrian FRUTIGER"],
+    ["ROCKWELL","p1o5l9i8c7e4s (5).png","frank hinman pierpont"],
+    ["ROSEWOOD","p1o5l9i8c7e4s (6).png",""],
     ["OFFICINA SERIF","OFFICINA SERIF.png"],
     ["THESIS THESERIF","THESIS THESERIF.png"]
   ],
   "REALE": [
-    ["BASKERVILLE","p1o5l9i8c7e4s (1).png"],
-    ["CASLON","p1o5l9i8c7e4s (2).png"],
-    ["GEORGIA","p1o5l9i8c7e4s (3).png"],
-    ["MRS EAVES","p1o5l9i8c7e4s (4).png"],
-    ["TIMES NEW ROMAN","p1o5l9i8c7e4s (5).png"],
-    ["ROTIS SERIF","ROTIS SERIF.png"]
+    ["BASKERVILLE","p1o5l9i8c7e4s (1).png","john baskerville"],
+    ["CASLON","p1o5l9i8c7e4s (2).png","william caslon"],
+    ["GEORGIA","p1o5l9i8c7e4s (3).png","Matthew carter"],
+    ["MRS EAVES","p1o5l9i8c7e4s (4).png","zuzana licko"],
+    ["TIMES NEW ROMAN","p1o5l9i8c7e4s (5).png","stanley morison"],
+    ["ROTIS SERIF","ROTIS SERIF.png",""]
   ],
   "SCRIPTE": [
     ["BICKHAM SCRIPT","p1o5l9i8c7e4s (1).png"],

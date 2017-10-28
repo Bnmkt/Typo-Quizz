@@ -121,6 +121,11 @@ img.imgFontPres{
   text-overflow: ellipsis;
   padding: .2em;
 }
+.button div.dchoix img{
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 100%;
+}
 .buttons input{
   width: 100%;
   padding:.5em;
@@ -225,6 +230,57 @@ html body #game[difficulty="6"] .buttons div.dchoix{
 }
 .titleSetting{
   color: orange;
+}
+.scoreContainer{
+  position: relative;
+  height: 50px;
+  width: 100%;
+  background-color: rgba(255,0,0,.6);
+  border: 5px solid green;
+  display: flex;
+}
+.scoreContainer:before{
+  content: attr(data-score)"/20";
+  width: 90px;
+  left:0;
+  right: 0;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 auto;
+  padding: 1em;
+  height: 20px;
+  border-radius: 10px 10px 0px 0px;
+  background-color: green;
+  position: absolute;
+  bottom: 2.7em;
+  z-index: -1;
+}
+.scoreContainer:before ::before{
+  content: "123";
+  width: 50px;
+  height: 50px;
+  background-color: red;
+}
+.scoreContainer .percent{
+  opacity: .9;
+  background-color: green;
+  width: 0%;
+}
+.data-r:before{
+  content: attr(data-r)"\000a0";
+  min-height: 40px;
+  min-width: 40px;
+  opacity: .6;
+  padding-left: 1em;
+  font-size: 1.6em;
+  font-weight: bold;
+}
+.op05{
+  opacity: .5;
+}
+.abs{
+  position: absolute;
+  right: 1em;
 }
 input[type="checkbox"]{
   vertical-align: middle;

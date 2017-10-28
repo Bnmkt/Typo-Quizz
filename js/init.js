@@ -5,6 +5,7 @@ var Quizz = function(container) {
   var previousFont;
   var element;
   var difficulty;
+  var previousDifficulty;
   var gametype;
   var gameMix = 0;
   const famillyBaseT = '["DIDONE", "FRACTURE", "GARALDE", "MANUAIRE", "INCISE", "REALE", "HUMANE", "SCRIPTE", "MECANE"]'
@@ -22,6 +23,31 @@ var Quizz = function(container) {
       element = container;
     }
     $(element).addClass('game')
+  }
+  if( !window.XMLSerializer ){
+     window.XMLSerializer = function(){};
+
+     window.XMLSerializer.prototype.serializeToString = function( XMLObject ){
+        return XMLObject.xml || '';
+     };
+  }
+  this.textToSVG = function(txt){
+    let text = txt;
+    var fontsize;
+    var textl = text.length
+    console.log(textl);
+    if(textl<=10){
+      fontsize = "33";
+    }else if(textl<=15){
+      fontsize = "28";
+    }else{
+      fontsize = "20"
+    }
+    var svg = $.parseXML("<svg xmlns='http://www.w3.org/2000/svg' height='86' width='270'><text text-anchor='middle' style='font-size:"+fontsize+"px; width:100%; font-family:Futura_Bold, sans-serif; font-weight:bold; color:white;' x='50%' y='50%' fill='white'>"+txt+"</text></svg>");
+    let image = new XMLSerializer();
+    let imageSVG = window.btoa(image.serializeToString(svg))
+    var img = '<img src="data:image/svg+xml;base64,'+imageSVG +'" alt="'+txt+'">';
+    return img;
   }
   var reset = function(trueReset) {
     if (trueReset) {
@@ -45,6 +71,9 @@ var Quizz = function(container) {
       if (checkedFamilly.indexOf(key) + 1 || checkedFamillyL.indexOf(key) + 1) {
         $.each(val, function(key2, val2) {
           val3 = [val2[0], val2[1], key]
+          if(val2[2]){
+            val3.push(val2[2].toString().toUpperCase())
+          }
           localTypo.push(val3)
         })
       }
@@ -78,7 +107,7 @@ var Quizz = function(container) {
         resp = [alltypo[nb][2]]
         if (resp[0].indexOf('LINEALE') + 1) {
           famille = JSON.parse(famillyBaseLT)
-          lastDif = difficulty;
+          previousDifficulty = difficulty;
           if (difficulty > 0) {
             difficulty = 4;
             element.attr("difficulty", 4)
@@ -96,6 +125,10 @@ var Quizz = function(container) {
     resp.sort(function() {
       return 0.5 - Math.random()
     });
+    if(previousDifficulty){
+      difficulty = previousDifficulty;
+      previousDifficulty = 0;
+    }
     alltypo[nb][3] = resp
     if (difficulty == 0) {
       alltypo[nb].splice(3, 1)
@@ -118,17 +151,12 @@ var Quizz = function(container) {
         element.append("<h1 id=\"Titre\">Typo Quizz</h1>");
         $(".home").remove()
         element.append("<p class=\"infor\">Le livre <a href=\"https://www.petitpoisson.be/projets/choixtypo\" target=\"_blank\">Choix typographique</a> est recommandé pour avoir une explication sur les différences entre les polices.</p>");
-        // element.append("<p class=\"infor\">Il contient également des informations sur l'histoire de celles-ci.</p>");
         element.append("<div class='buttons'>");
         $("div.buttons").append('<div class="qQlist" order="0"><a class="qqlist">JOUER</a></div>')
         $("div.buttons").append('<div class="qScore" order="2"><a class="score">SCORE</a></div>')
         $("div.buttons").append('<div class="qList" order="2"><a class="list">LISTE</a></div>')
         $("div.buttons").append('<div class="qSetting" order="2"><a class="setting">OPTION</a></div>')
         element.append("<p class=\"infor\">Cette app est conçue pour aider les étudiants du cours de typographie de M. Spirlet à l'Inpress (HEPL) à Seraing.</p>");
-        // element.append("<p class=\"infor\">Je précise également que cette application ne sert pas d'antisèche, c'est avant tous un support d'<b>étude&nbsp;!</b>.</p>");
-        // element.append("<p class=\"infor\">Une alternative web existe pour les utilisateurs d'IOS sur <a href=\"typo.bnmkt.net\" target=\"_blank\">typo.bnmkt.net</a>, n'hésitez pas à la leur conseiller&nbsp;!n</p>");
-        // $("[disable]").removeClass("launch2")
-        // $("[disable]").removeClass("launch3")
         $(".list").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow("list");
@@ -166,7 +194,11 @@ var Quizz = function(container) {
             $("#fontlist").append("<ol class='title'>" + val[2] + "</ol>");
             lastfamily = val[2]
           }
-          $("#fontlist").append("<ol>" + val[0] + " <img src='./img/font/" + val[2] + "/" + val[1] + "'></ol>");
+          let displayname = "<b>"+val[0]+"</b>";
+          if(val[3]){
+            displayname+=" - "+val[3]
+          }
+          $("#fontlist").append("<ol>" + displayname + " <img src='./img/font/" + val[2] + "/" + val[1] + "'></ol>");
         })
         break;
       case 'quizzList':
@@ -224,13 +256,13 @@ var Quizz = function(container) {
             for (var i = 0; i < ty[3].length; i++) {
               ty[3][i] = ty[3][i].split("LINEALE")[1];
             }
-            $(".iflin").append("<p>Linéale...</p>")
+            $(".iflin").append("<p><i><small>La difficulté est mise en normale pour les linéale</small></i></p>")
           }
           for (var i = 0; i < ty[3].length; i++) {
-            $("div.buttons").append('<div class="dchoix qBtnR' + i + '"><a class="choix">' + ty[3][i] + '</a></div>')
+            $("div.buttons").append('<div class="dchoix qBtnR' + i + '"><a class="choix" data-reponse="'+ty[3][i]+'">' + this.textToSVG(ty[3][i]) + '</a></div>')
           }
           $("a.choix").click(function(e) {
-            var content = $(this).text();
+            var content = $(this).attr("data-reponse");
             if (reponse.indexOf("LINEALE") + 1) {
               content = "LINEALE" + content;
             }
@@ -285,10 +317,10 @@ var Quizz = function(container) {
         var reponse = ty[0];
         if (ty[3]) {
           for (var i = 0; i < ty[3].length; i++) {
-            $("div.buttons").append('<div class="dchoix qBtnR' + i + '"><a class="choix">' + ty[3][i] + '</a></div>')
+            $("div.buttons").append('<div class="dchoix qBtnR' + i + '"><a class="choix" data-reponse="'+ty[3][i]+'">' + this.textToSVG(ty[3][i]) + '</a></div>')
           }
           $("a.choix").click(function(e) {
-            var content = $(this).text();
+            var content = $(this).attr("data-reponse");
             previousFont = ty;
             if (content == reponse) {
               $("#game").fadeOut(450, function() {
@@ -332,10 +364,16 @@ var Quizz = function(container) {
           if (gametype) {
             switch (gametype) {
               case 2:
-                quizz.changeWindow("quizzFam")
+                $("#game").fadeOut(10, function() {
+                  quizz.changeWindow("quizzFam");
+                  $("#game").fadeIn(10, function() {});
+                });
                 break;
               case 1:
-                quizz.changeWindow("quizz")
+              $("#game").fadeOut(10, function() {
+                quizz.changeWindow("quizzFam");
+                $("#game").fadeIn(10, function() {});
+              });
                 break;
             }
           } else {
@@ -356,11 +394,11 @@ var Quizz = function(container) {
         }
         if (gameMix) {
           t = "quizzMix";
-          var text = "Quizz Mixte"
+          var text = "Quizz Mixtes"
         }
         round++;
         score[0]++;
-        element.append('<div class="victory launch">VICTOIRE :)<br>La bonne réponse était : ' + previousFont[i] + '<br><br>Appuie ici pour continuer ' + text + '</div>')
+        element.append('<div class="victory launch">VICTOIRE :)<br>La bonne réponse était : ' + previousFont[i] + '<br><img src="./img/font/' + previousFont[2] + '/' + previousFont[1] + '" class="imgFontPres"><br>Appuie ici pour continuer ' + text + '</div>')
         $(".launch").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow(t);
@@ -382,9 +420,9 @@ var Quizz = function(container) {
         score[1]++;
         if (gameMix) {
           t = "quizzMix";
-          var text = "Quizz Mixte"
+          var text = "Quizz Mixtes"
         }
-        element.append('<div class="defeat launch">RATÉ :(<br>La bonne réponse était : ' + previousFont[i] + '<br><img src="./img/font/' + previousFont[2] + '/' + previousFont[1] + '" class="imgFontPres"Appuie ici pour continuer ' + text + '</div>')
+        element.append('<div class="defeat launch">RATÉ :(<br>La bonne réponse était : ' + previousFont[i] + '<br><img src="./img/font/' + previousFont[2] + '/' + previousFont[1] + '" class="imgFontPres">Appuie ici pour continuer ' + text + '</div>')
         $(".launch").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow(t);
@@ -395,10 +433,8 @@ var Quizz = function(container) {
       case 'score':
         var correct = score[0];
         var incorrect = score[1];
-        element.append("<h1>Panneau des score (WIP)</h1>")
-        element.append("<p>Vous avez un score de " + correct + " sur " + round + " (score = RC - (RI/5))</p>")
-        element.append("<p>RC = " + correct + "<br>RI = " + incorrect + "<br>"+correct+"-("+incorrect+"/5) = "+(correct-(incorrect/5))+"/"+round+"</p>")
-        scorer = ((correct-(incorrect/5))/round)*20
+        element.append("<h1>Panneau des scores</h1>")
+        scorer = Math.floor((((correct-(incorrect/5))/round)*20)*100)/100
         var text = "";
         if (scorer < 0 && round) {
           text = "Dommage";
@@ -416,7 +452,11 @@ var Quizz = function(container) {
         if (isNaN(scorer)) {
           scorer = 0;
         }
-        element.append("<p>celà te fais " + scorer + "/20...<br>" + text + "</p>")
+        element.append('<div class="scoreContainer" data-score="'+scorer+'"><div class="percent"><span class="data-r" data-r="'+correct+'">RC</span></div><span class="data-r abs" data-r="'+incorrect+'">RI</span></div>')
+        element.append('<p class="infor">'+text+'</p>')
+        element.append('<p class="infor op05">Barème +1 / -0.2</p>')
+        element.append('<p class="infor op05">Calcul des points : RC - ( RI/5 )</p>')
+        $(".percent").animate({"width":scorer*5 +"%"}, {duration:1000})
         break;
       case 'setting':
         element.append("<h1>Paramètres</h1>")
