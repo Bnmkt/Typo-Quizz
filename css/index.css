@@ -177,35 +177,34 @@ html body #game[difficulty="6"] .buttons div.dchoix{
   transform: rotate3d(.5, .5, 1, 20deg);
   transform: scale(.95);
 }
-.qQlist a{
-  background-color: rgb(214, 39, 39);
-  background-image: url("../img/quizzMode.svg");
+.buttons div a{
   background-size: 100% 100%;
   color: rgba(0,0,0,0);
+  border-radius: 5px;
+}
+.qQlist a{
+  background-color: rgb(176, 31, 31);
+  background-image: url("../img/quizzMode.svg");
 }
 .qQuizz a{
   background-color: rgb(214, 39, 39);
   background-image: url("../img/quizzPol.svg");
-  background-size: 100% 100%;
-  color: rgba(0,0,0,0);
 }
 .qQuizzFam a{
-  background-color: rgb(39, 151, 214);
+  background-color: rgb(33, 136, 194);
   background-image: url("../img/quizzFam.svg");
-  background-size: 100% 100%;
-  color: rgba(0,0,0,0);
+}
+.qQuizzTyp a{
+  background-color: rgb(214, 186, 39);
+  background-image: url("../img/quizzFam.svg");
 }
 .qQuizzMix a{
-  background-color: rgb(42, 214, 39);
+  background-color: rgb(35, 170, 32);
   background-image: url("../img/quizzMix.svg");
-  background-size: 100% 100%;
-  color: rgba(0,0,0,0);
 }
 .qSetting a{
   background-color: rgb(74, 86, 93);
   background-image: url("../img/setting.svg");
-  background-size: 100% 100%;
-  color: rgba(0,0,0,0);
 }
 .qList a{
   background-color: rgb(62, 25, 209);

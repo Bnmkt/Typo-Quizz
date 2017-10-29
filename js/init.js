@@ -32,18 +32,19 @@ var Quizz = function(container) {
      };
   }
   this.textToSVG = function(txt){
-    let text = txt;
+    let text = txt.toString().split(",")[0].toString();
     var fontsize;
     var textl = text.length
-    console.log(textl);
-    if(textl<=10){
-      fontsize = "33";
-    }else if(textl<=15){
-      fontsize = "28";
+    if(textl<=8){
+      fontsize = "30";
+    }else if(textl<=13){
+      fontsize = "24";
+    }else if(textl<=17){
+      fontsize = "20";
     }else{
-      fontsize = "20"
+      fontsize = "14"
     }
-    var svg = $.parseXML("<svg xmlns='http://www.w3.org/2000/svg' height='86' width='270'><text text-anchor='middle' style='font-size:"+fontsize+"px; width:100%; font-family:Futura_Bold, sans-serif; font-weight:bold; color:white;' x='50%' y='50%' fill='white'>"+txt+"</text></svg>");
+    var svg = $.parseXML("<svg xmlns='http://www.w3.org/2000/svg' height='86' width='270'><text text-anchor='middle' style='font-size:"+fontsize+"px; width:100%; font-family:Futura_Bold, sans-serif; font-weight:bold; color:white;' x='50%' y='50%' fill='white'>"+text+"</text></svg>");
     let image = new XMLSerializer();
     let imageSVG = window.btoa(image.serializeToString(svg))
     var img = '<img src="data:image/svg+xml;base64,'+imageSVG +'" alt="'+txt+'">';
@@ -70,11 +71,14 @@ var Quizz = function(container) {
     $.each(typos, function(key, val) {
       if (checkedFamilly.indexOf(key) + 1 || checkedFamillyL.indexOf(key) + 1) {
         $.each(val, function(key2, val2) {
-          val3 = [val2[0], val2[1], key]
-          if(val2[2]){
-            val3.push(val2[2].toString().toUpperCase())
+          if(val2 != previousFont){
+            val3 = [val2[0], val2[1], key]
+            if(val2[2]){
+              val4 = val2[2].toString().toUpperCase()
+              val3.push(val4.split(","))
+            }
+            localTypo.push(val3)
           }
-          localTypo.push(val3)
         })
       }
     })
@@ -93,6 +97,7 @@ var Quizz = function(container) {
     switch (t) {
       case 2: // RandomTypo
         resp = [alltypo[nb][0]]
+        previousFont = alltypo[nb]
         while (resp.length < difficulty) {
           var nbChoix = Math.floor(Math.random() * alltypo.length);
           var choix = alltypo[nbChoix][0];
@@ -102,8 +107,22 @@ var Quizz = function(container) {
           }
         }
         break;
+      case 3: // Random artist
+        resp = [alltypo[nb][3].sort(function() { return 0.5 - Math.random() })[0]]
+        previousFont = alltypo[nb]
+        alltypo[nb][0] = resp[0];
+        while (resp.length < difficulty) {
+          var nbChoix = Math.floor(Math.random() * alltypo.length);
+          var choix = alltypo[nbChoix][3];
+          if (choix != resp[0] && choix) {
+            resp.push(choix)
+            alltypo[nbChoix][3] = undefined;
+          }
+        }
+        break;
       default: // RandomFamilly
         let famille = JSON.parse(famillyBaseT)
+        previousFont = alltypo[nb]
         resp = [alltypo[nb][2]]
         if (resp[0].indexOf('LINEALE') + 1) {
           famille = JSON.parse(famillyBaseLT)
@@ -148,6 +167,7 @@ var Quizz = function(container) {
     });
     switch (windowName) {
       case 'index':
+        $("div.game").effect("slide");
         element.append("<h1 id=\"Titre\">Typo Quizz</h1>");
         $(".home").remove()
         element.append("<p class=\"infor\">Le livre <a href=\"https://www.petitpoisson.be/projets/choixtypo\" target=\"_blank\">Choix typographique</a> est recommandé pour avoir une explication sur les différences entre les polices.</p>");
@@ -180,7 +200,7 @@ var Quizz = function(container) {
         $(".score").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow("score");
-            $("#game").fadeIn(150, function() {});
+            $("#game").fadeIn(100, function() {});
           });
         });
         break;
@@ -213,8 +233,10 @@ var Quizz = function(container) {
         }
         element.append("<div class='buttons'>");
         $("div.buttons").append('<div class="qQuizzMix" order="0"><a class="launch3" ' + disable + '>Mixte</a></div>')
-        $("div.buttons").append('<div class="qQuizz" order="1"><a class="launch">Polices</a></div>')
-        $("div.buttons").append('<div class="qQuizzFam" order="1"><a class="launch2" ' + disable + '>Familles</a></div>')
+        $("div.buttons").append('<div class="qQuizzTyp" order="2"><a class="launch4" ' + disable + '>Typographe</a></div>')
+        $("div.buttons").append('<div class="qQuizz" order="2"><a class="launch">Polices</a></div>')
+        $("div.buttons").append('<div class="qQuizzFam" order="2"><a class="launch2" ' + disable + '>Familles</a></div>')
+        $("div.buttons").hide()
         $(".launch").click(function() {
           gameMix = 0
           $("#game").fadeOut(250, function() {
@@ -236,6 +258,14 @@ var Quizz = function(container) {
             $("#game").fadeIn(150, function() {});
           });
         });
+        $(".launch4").click(function() {
+          gameMix = 0;
+          $("#game").fadeOut(250, function() {
+            quizz.changeWindow("quizzTyp");
+            $("#game").fadeIn(150, function() {});
+          });
+        });
+        setTimeout(function(){ $("div.buttons").show("scale",{origin:["middle","center"], easing:"easeOutBack"},200); }, 100)
         break;
       case 'quizzFam':
         gametype = 1;
@@ -248,7 +278,9 @@ var Quizz = function(container) {
         $("#score").text(scored)
         var game = $("div#fontlist")
         game.addClass("gameQuizz")
-        game.append("<img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" />")
+        game.append("<div id=\"imgpl\"><img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" /></div>")
+        $("#imgpl").hide();
+        setTimeout(function(){$("#imgpl").effect("slide")},100)
         game.append("<div class=\"iflin\"></div>")
         game.append("<div class='buttons'>");
         if (ty[3]) {
@@ -267,12 +299,13 @@ var Quizz = function(container) {
               content = "LINEALE" + content;
             }
             previousFont = ty;
-            if (content == reponse) {
+            if (content == reponse || (reponse.indexOf(content) > -1 && content.length > 3)) {
               $("#game").fadeOut(650, function() {
                 quizz.changeWindow("victory");
                 $("#game").fadeIn(150, function() {});
               });
             } else {
+              $("div.buttons").effect("shake");
               $("#game").fadeOut(650, function() {
                 quizz.changeWindow("defeat");
                 $("#game").fadeIn(150, function() {});
@@ -287,12 +320,13 @@ var Quizz = function(container) {
             if (inputVal != "" && inputVal.length >= 3) {
               content = inputVal.toUpperCase();
               previousFont = ty
-              if (content == reponse) {
+              if (content == reponse || (reponse.indexOf(content) > -1 && content.length > 3)) {
                 $("#game").fadeOut(650, function() {
                   quizz.changeWindow("victory");
                   $("#game").fadeIn(150, function() {});
                 });
               } else {
+                $("div.buttons").effect("shake");
                 $("#game").fadeOut(650, function() {
                   quizz.changeWindow("defeat");
                   $("#game").fadeIn(150, function() {});
@@ -312,7 +346,9 @@ var Quizz = function(container) {
         $("#score").text(scored)
         var game = $("div#fontlist")
         game.addClass("gameQuizz")
-        game.append("<img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" />")
+        game.append("<div id=\"imgpl\"><img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" /></div>")
+        $("#imgpl").hide();
+        setTimeout(function(){$("#imgpl").effect("slide")},100)
         game.append("<div class='buttons'>");
         var reponse = ty[0];
         if (ty[3]) {
@@ -322,12 +358,13 @@ var Quizz = function(container) {
           $("a.choix").click(function(e) {
             var content = $(this).attr("data-reponse");
             previousFont = ty;
-            if (content == reponse) {
+            if (content == reponse || (reponse.indexOf(content) > -1 && content.length > 3)) {
               $("#game").fadeOut(450, function() {
                 quizz.changeWindow("victory");
                 $("#game").fadeIn(150, function() {});
               });
             } else {
+              $("div.buttons").effect("shake");
               $("#game").fadeOut(450, function() {
                 quizz.changeWindow("defeat");
                 $("#game").fadeIn(150, function() {});
@@ -342,12 +379,72 @@ var Quizz = function(container) {
             if (inputVal != "" && inputVal.length >= 3) {
               content = inputVal.toUpperCase();
               previousFont = ty
-              if (content == reponse) {
+              if (content == reponse || (reponse.indexOf(content) > -1 && content.length > 3)) {
                 $("#game").fadeOut(650, function() {
                   quizz.changeWindow("victory");
                   $("#game").fadeIn(150, function() {});
                 });
               } else {
+                $("div.buttons").effect("shake");
+                $("#game").fadeOut(650, function() {
+                  quizz.changeWindow("defeat");
+                  $("#game").fadeIn(150, function() {});
+                });
+              }
+            }
+          })
+        }
+        break;
+      case 'quizzTyp':
+        gametype = 3
+        element.append("<h1>Quelle typographe ?</h1>")
+        var ty = randomFont(3);
+        element.append("<div id='fontlist'>")
+        element.append("<div id='score'>")
+        scored = Math.round(score[0] * 100) / 100
+        $("#score").text(scored)
+        var game = $("div#fontlist")
+        game.addClass("gameQuizz")
+        game.append("<div id=\"imgpl\"><img src='./img/font/" + ty[2] + "/" + ty[1] + "' class=\"imgFontPres\" alt=\"\" /></div>")
+        $("#imgpl").hide();
+        setTimeout(function(){$("#imgpl").effect("slide")},100)
+        game.append("<div class='buttons'>");
+        var reponse = ty[0];
+        if (ty[3]) {
+          for (var i = 0; i < ty[3].length; i++) {
+            $("div.buttons").append('<div class="dchoix qBtnR' + i + '"><a class="choix" data-reponse="'+ty[3][i]+'">' + this.textToSVG(ty[3][i]) + '</a></div>')
+          }
+          $("a.choix").click(function(e) {
+            var content = $(this).attr("data-reponse");
+            previousFont = ty;
+            if (content == reponse || (reponse.indexOf(content) > -1 && content.length > 3)) {
+              $("#game").fadeOut(450, function() {
+                quizz.changeWindow("victory");
+                $("#game").fadeIn(150, function() {});
+              });
+            } else {
+              $("div.buttons").effect("shake");
+              $("#game").fadeOut(450, function() {
+                quizz.changeWindow("defeat");
+                $("#game").fadeIn(150, function() {});
+              });
+            }
+          })
+        } else {
+          $("div.buttons").append("<input type=\"text\" id=\"inputResp\" placeholder=\"Réponse\"/>")
+          $("div.buttons").append("<input type=\"submit\" value=\"Valider\" id=\"inputSubmit\" />")
+          $("#inputSubmit").click(function() {
+            var inputVal = $("#inputResp").val();
+            if (inputVal != "" && inputVal.length >= 3) {
+              content = inputVal.toUpperCase();
+              previousFont = ty
+              if (content == reponse || (reponse.indexOf(content) > -1 && content.length > 3)) {
+                $("#game").fadeOut(650, function() {
+                  quizz.changeWindow("victory");
+                  $("#game").fadeIn(150, function() {});
+                });
+              } else {
+                $("div.buttons").effect("shake");
                 $("#game").fadeOut(650, function() {
                   quizz.changeWindow("defeat");
                   $("#game").fadeIn(150, function() {});
@@ -363,6 +460,12 @@ var Quizz = function(container) {
           w = false;
           if (gametype) {
             switch (gametype) {
+              case 3:
+                $("#game").fadeOut(10, function() {
+                  quizz.changeWindow("quizzTyp");
+                  $("#game").fadeIn(10, function() {});
+                });
+                break;
               case 2:
                 $("#game").fadeOut(10, function() {
                   quizz.changeWindow("quizzFam");
@@ -383,9 +486,14 @@ var Quizz = function(container) {
         } while (w == true);
         break;
       case "victory":
+        $("div#game").effect("slide",{direction:"left", easing:"easeOutBack"})
         if (gametype == 2) {
           var t = "quizz";
           var text = "Quizz Polices"
+          i = 0
+        } else if (gametype == 3) {
+          var t = "quizzTyp";
+          var text = "Quizz Typographe"
           i = 0
         } else if (gametype == 1) {
           var t = "quizzFam";
@@ -398,7 +506,7 @@ var Quizz = function(container) {
         }
         round++;
         score[0]++;
-        element.append('<div class="victory launch">VICTOIRE :)<br>La bonne réponse était : ' + previousFont[i] + '<br><img src="./img/font/' + previousFont[2] + '/' + previousFont[1] + '" class="imgFontPres"><br>Appuie ici pour continuer ' + text + '</div>')
+        element.append('<div class="victory launch"><br><b>' + previousFont[i] + '</b><br><img src="./img/font/' + previousFont[2] + '/' + previousFont[1] + '" class="imgFontPres"><br>Continuer ' + text + '</div>')
         $(".launch").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow(t);
@@ -407,9 +515,14 @@ var Quizz = function(container) {
         });
         break;
       case "defeat":
+        $("div#game").effect("slide",{direction:"right", easing:"easeOutBack"})
         if (gametype == 2) {
           var t = "quizz";
           var text = "Quizz Polices"
+          i = 0
+        } else if (gametype == 3) {
+          var t = "quizzTyp";
+          var text = "Quizz Typographe"
           i = 0
         } else if (gametype == 1) {
           var t = "quizzFam";
@@ -422,7 +535,7 @@ var Quizz = function(container) {
           t = "quizzMix";
           var text = "Quizz Mixtes"
         }
-        element.append('<div class="defeat launch">RATÉ :(<br>La bonne réponse était : ' + previousFont[i] + '<br><img src="./img/font/' + previousFont[2] + '/' + previousFont[1] + '" class="imgFontPres">Appuie ici pour continuer ' + text + '</div>')
+        element.append('<div class="defeat launch"><br><b>' + previousFont[i] + '</b><br><img src="./img/font/' + previousFont[2] + '/' + previousFont[1] + '" class="imgFontPres">Continuer ' + text + '</div>')
         $(".launch").click(function() {
           $("#game").fadeOut(250, function() {
             quizz.changeWindow(t);
@@ -456,7 +569,7 @@ var Quizz = function(container) {
         element.append('<p class="infor">'+text+'</p>')
         element.append('<p class="infor op05">Barème +1 / -0.2</p>')
         element.append('<p class="infor op05">Calcul des points : RC - ( RI/5 )</p>')
-        $(".percent").animate({"width":scorer*5 +"%"}, {duration:1000})
+        $(".percent").animate({"width":scorer*5 +"%"}, {duration:1000, easing:"easeOutBack"})
         break;
       case 'setting':
         element.append("<h1>Paramètres</h1>")
@@ -560,5 +673,6 @@ var Quizz = function(container) {
     localStorage.setItem("cFamL", JSON.stringify(checkedFamillyL));
     window.scrollTo(0, 0);
     // element.append("<p class=\"infor copyleft\">App codée par Sean Ferrara (2285)</p>")
+      $("a").click(function(){ $(this).effect("puff",function(){ $(this).show() }) })
   }
 }
