@@ -456,6 +456,7 @@ var Quizz = function(container) {
         break;
       case 'quizzMix':
         var w = false;
+			gametype = null;
         do {
           w = false;
           if (gametype) {
@@ -474,13 +475,14 @@ var Quizz = function(container) {
                 break;
               case 1:
               $("#game").fadeOut(10, function() {
-                quizz.changeWindow("quizzFam");
+                quizz.changeWindow("quizz");
                 $("#game").fadeIn(10, function() {});
               });
                 break;
             }
           } else {
-            gametype = Math.round(Math.random()) + 1;
+            gametype = Math.round(Math.random()*2)+1;
+			  console.log(gametype);
             w = true;
           }
         } while (w == true);
